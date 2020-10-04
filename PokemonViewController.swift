@@ -2,14 +2,25 @@ import UIKit
 
 class PokemonViewController: UIViewController {
     var url: String!
+    var caught: Bool = false
 
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var numberLabel: UILabel!
     @IBOutlet var type1Label: UILabel!
     @IBOutlet var type2Label: UILabel!
+    @IBOutlet var catchButton: UIButton!
 
     func capitalize(text: String) -> String {
         return text.prefix(1).uppercased() + text.dropFirst()
+    }
+    
+    @IBAction func toggleCatch() {
+        caught.toggle()
+        if caught {
+            catchButton.setTitle("Release", for: .normal)
+        } else {
+            catchButton.setTitle("Catch", for: .normal)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
