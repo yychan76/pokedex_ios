@@ -1,10 +1,30 @@
 import UIKit
 
-class PokemonListViewController: UITableViewController {
+class PokemonListViewController: UITableViewController, UISearchBarDelegate {
     var pokemon: [PokemonListResult] = []
+    var searchResults: [PokemonListResult] = []
+    
+    @IBOutlet var searchBar: UISearchBar!
     
     func capitalize(text: String) -> String {
         return text.prefix(1).uppercased() + text.dropFirst()
+    }
+    
+    // populate searchResults matching searchText
+    func getSearchResult(searchText: String) {
+        searchResults = []
+        for item in pokemon {
+            if item.name.lowercased().contains(searchText.lowercased().trimmingCharacters(in: .whitespaces)) || searchText.trimmingCharacters(in: .whitespaces).isEmpty {
+                searchResults.append(item)
+            }
+        }
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        getSearchResult(searchText: searchText)
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
     override func viewDidLoad() {
@@ -22,6 +42,8 @@ class PokemonListViewController: UITableViewController {
             do {
                 let entries = try JSONDecoder().decode(PokemonListResults.self, from: data)
                 self.pokemon = entries.results
+                // also initialise the search results with empty string
+                self.getSearchResult(searchText: "")
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
@@ -30,6 +52,8 @@ class PokemonListViewController: UITableViewController {
                 print(error)
             }
         }.resume()
+        
+        searchBar.delegate = self
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -37,12 +61,12 @@ class PokemonListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return pokemon.count
+        return searchResults.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PokemonCell", for: indexPath)
-        cell.textLabel?.text = capitalize(text: pokemon[indexPath.row].name)
+        cell.textLabel?.text = capitalize(text: searchResults[indexPath.row].name)
         return cell
     }
     
@@ -50,7 +74,7 @@ class PokemonListViewController: UITableViewController {
         if segue.identifier == "ShowPokemonSegue",
                 let destination = segue.destination as? PokemonViewController,
                 let index = tableView.indexPathForSelectedRow?.row {
-            destination.url = pokemon[index].url
+            destination.url = searchResults[index].url
         }
     }
 }
