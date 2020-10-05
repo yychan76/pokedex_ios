@@ -1,8 +1,14 @@
 import UIKit
 
+protocol PokemonViewControllerDelegate: NSObjectProtocol {
+    func updateCaughtStatus(data: [String: Bool])
+}
+
 class PokemonViewController: UIViewController {
     var url: String!
-    var caught: Bool = false
+    var name: String!
+    var caught: Bool!
+    weak var delegate: PokemonViewControllerDelegate?
 
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var numberLabel: UILabel!
@@ -16,6 +22,13 @@ class PokemonViewController: UIViewController {
     
     @IBAction func toggleCatch() {
         caught.toggle()
+        setButtonText(caught: caught)
+        if let delegate = delegate {
+            delegate.updateCaughtStatus(data: [name: caught])
+        }
+    }
+    
+    func setButtonText(caught: Bool) {
         if caught {
             catchButton.setTitle("Release", for: .normal)
         } else {
@@ -43,6 +56,7 @@ class PokemonViewController: UIViewController {
             do {
                 let result = try JSONDecoder().decode(PokemonResult.self, from: data)
                 DispatchQueue.main.async {
+                    self.name = result.name
                     self.navigationItem.title = self.capitalize(text: result.name)
                     self.nameLabel.text = self.capitalize(text: result.name)
                     self.numberLabel.text = String(format: "#%03d", result.id)
@@ -55,6 +69,7 @@ class PokemonViewController: UIViewController {
                             self.type2Label.text = typeEntry.type.name
                         }
                     }
+                    self.setButtonText(caught: self.caught)
                 }
             }
             catch let error {

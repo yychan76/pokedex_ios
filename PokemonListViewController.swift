@@ -1,13 +1,21 @@
 import UIKit
 
-class PokemonListViewController: UITableViewController, UISearchBarDelegate {
+class PokemonListViewController: UITableViewController, UISearchBarDelegate, PokemonViewControllerDelegate {
     var pokemon: [PokemonListResult] = []
     var searchResults: [PokemonListResult] = []
+    var caughtPokemon: [String: Bool] = [:]
     
     @IBOutlet var searchBar: UISearchBar!
     
     func capitalize(text: String) -> String {
         return text.prefix(1).uppercased() + text.dropFirst()
+    }
+    
+    func updateCaughtStatus(data: [String : Bool]) {
+        for (name, caught) in data {
+            caughtPokemon.updateValue(caught, forKey: name)
+        }
+        print(caughtPokemon)
     }
     
     // populate searchResults matching searchText
@@ -75,6 +83,11 @@ class PokemonListViewController: UITableViewController, UISearchBarDelegate {
                 let destination = segue.destination as? PokemonViewController,
                 let index = tableView.indexPathForSelectedRow?.row {
             destination.url = searchResults[index].url
+            destination.delegate = self
+            destination.caught = false
+            if let caught = caughtPokemon[searchResults[index].name] {
+                destination.caught = caught
+            }
         }
     }
 }
