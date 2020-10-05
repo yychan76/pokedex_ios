@@ -1,6 +1,7 @@
 import UIKit
 
 class PokemonListViewController: UITableViewController, UISearchBarDelegate, PokemonViewControllerDelegate {
+    let defaultsKey = "CS50_Caught_Pokemon"
     var pokemon: [PokemonListResult] = []
     var searchResults: [PokemonListResult] = []
     var caughtPokemon: [String: Bool] = [:]
@@ -11,11 +12,18 @@ class PokemonListViewController: UITableViewController, UISearchBarDelegate, Pok
         return text.prefix(1).uppercased() + text.dropFirst()
     }
     
+    // delegate function to update caught status from the Pokemon detailed view
     func updateCaughtStatus(data: [String : Bool]) {
         for (name, caught) in data {
             caughtPokemon.updateValue(caught, forKey: name)
         }
         print(caughtPokemon)
+        UserDefaults.standard.set(caughtPokemon, forKey: defaultsKey)
+    }
+    
+    // restore previous status stored in user defaults
+    func loadCaughtStatusFromDefaults() {
+        caughtPokemon = UserDefaults.standard.dictionary(forKey: defaultsKey) as! [String: Bool]
     }
     
     // populate searchResults matching searchText
@@ -62,6 +70,7 @@ class PokemonListViewController: UITableViewController, UISearchBarDelegate, Pok
         }.resume()
         
         searchBar.delegate = self
+        loadCaughtStatusFromDefaults()
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
