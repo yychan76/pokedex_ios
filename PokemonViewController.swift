@@ -5,11 +5,13 @@ protocol PokemonViewControllerDelegate: NSObjectProtocol {
 }
 
 class PokemonViewController: UIViewController {
+    var image: UIImage!
     var url: String!
     var name: String!
     var caught: Bool!
     weak var delegate: PokemonViewControllerDelegate?
 
+    @IBOutlet var imageView: UIImageView!
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var numberLabel: UILabel!
     @IBOutlet var type1Label: UILabel!
@@ -57,6 +59,13 @@ class PokemonViewController: UIViewController {
                 let result = try JSONDecoder().decode(PokemonResult.self, from: data)
                 DispatchQueue.main.async {
                     self.name = result.name
+                    do {
+                        let imageData = try Data(contentsOf: URL(string: result.sprites.front_default)!)
+                        self.image = UIImage(data: imageData)
+                        self.imageView.image = self.image
+                    } catch let error {
+                        print(error)
+                    }
                     self.navigationItem.title = self.capitalize(text: result.name)
                     self.nameLabel.text = self.capitalize(text: result.name)
                     self.numberLabel.text = String(format: "#%03d", result.id)

@@ -17,7 +17,6 @@ class PokemonListViewController: UITableViewController, UISearchBarDelegate, Pok
         for (name, caught) in data {
             caughtPokemon.updateValue(caught, forKey: name)
         }
-        print(caughtPokemon)
         UserDefaults.standard.set(caughtPokemon, forKey: defaultsKey)
     }
     
@@ -28,7 +27,7 @@ class PokemonListViewController: UITableViewController, UISearchBarDelegate, Pok
     
     // populate searchResults matching searchText
     func getSearchResult(searchText: String) {
-        searchResults = []
+        searchResults.removeAll()
         for item in pokemon {
             if item.name.lowercased().contains(searchText.lowercased().trimmingCharacters(in: .whitespaces)) || searchText.trimmingCharacters(in: .whitespaces).isEmpty {
                 searchResults.append(item)

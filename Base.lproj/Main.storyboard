@@ -102,12 +102,17 @@
                                     <action selector="toggleCatch" destination="yFp-uv-eEo" eventType="touchUpInside" id="yfg-3p-bfc"/>
                                 </connections>
                             </button>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xm2-GI-jok">
+                                <rect key="frame" x="20" y="158" width="374" height="193"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="cVc-In-IFv"/>
                     </view>
                     <connections>
                         <outlet property="catchButton" destination="EEA-n9-fJI" id="t8Q-e6-kkt"/>
+                        <outlet property="imageView" destination="xm2-GI-jok" id="DGk-Hn-IbD"/>
                         <outlet property="nameLabel" destination="Zti-lO-HCX" id="4yz-Df-XpM"/>
                         <outlet property="numberLabel" destination="Sja-25-iqf" id="cj5-fb-cuF"/>
                         <outlet property="type1Label" destination="pSm-0Z-rVe" id="OOi-5I-FB3"/>
