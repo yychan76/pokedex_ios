@@ -98,7 +98,6 @@ class PokemonViewController: UIViewController {
         }
         
         let url = "https://pokeapi.co/api/v2/pokemon-species/\(id)/"
-        print(url)
         
         URLSession.shared.dataTask(with: URL(string: url)!) { (data, response, error) in
             guard let data = data else {
@@ -108,12 +107,14 @@ class PokemonViewController: UIViewController {
             do {
                 let result = try JSONDecoder().decode(PokemonDescriptionResult.self, from: data)
                 DispatchQueue.main.async {
+                    var descriptions: [String] = []
                     for entry in result.flavor_text_entries {
                         if entry.language.name == "en" {
-                            self.descriptionTextView.text = entry.flavor_text.replacingOccurrences(of: "[\\n\\f]", with: " ", options: [.regularExpression])
-                            return
+                            descriptions.append( entry.flavor_text.replacingOccurrences(of: "[\\n\\f]", with: " ", options: [.regularExpression]) + "\n")
                         }
                     }
+                    descriptions = Array(NSOrderedSet(array: descriptions)) as! [String]
+                    self.descriptionTextView.text = descriptions.joined()
                 }
             }
             catch let error {
